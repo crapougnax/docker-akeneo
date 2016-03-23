@@ -2,6 +2,7 @@ FROM tutum/apache-php
 
 RUN apt-get update
 RUN apt-get install -y \
+    git \
     wget \
     php5-intl \
     php5-mcrypt
@@ -10,11 +11,11 @@ RUN php5enmod mcrypt
 
 RUN a2enmod rewrite
 
-RUN echo "date.timezone = \"Asia/Dubai\"" >> /etc/php5/cli/php.ini && \
-    echo "date.timezone = \"Asia/Dubai\"" >> /etc/php5/apache2/php.ini
+RUN echo "date.timezone = \"Europe/Paris\"" >> /etc/php5/cli/php.ini && \
+    echo "date.timezone = \"Europe/Paris\"" >> /etc/php5/apache2/php.ini
 
 # Set Default Variables
-ENV PIM_VERSION 1.2.7
+ENV PIM_VERSION 1.5.1
 
 RUN rm -rf /app && \
     mkdir -p /src && \
@@ -24,7 +25,9 @@ RUN rm -rf /app && \
 
 WORKDIR /src
 
-RUN composer config -g github-oauth.github.com 0e22a79af5acecd53ec1fc33cd300667c233f3f1 && \
+ARG GH_OAUTH
+
+RUN composer config -g github-oauth.github.com ${GH_OAUTH} && \
     composer install --prefer-dist 
 
 ADD ./sites-enabled/akeneo-pim.conf /etc/apache2/sites-enabled/000-default.conf
