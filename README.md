@@ -43,10 +43,13 @@ The container accepts the following environment variables
   -p 80:80
   crapougnax/akeneo
   ```
+  
+Careful, the akeneo deployment only starts when a valid mysql link is detected by the container. 
+So, you either need to link one mysql/mariadb container or use the docker-compose configuration.
 
 ### Using with docker-compose
 
-See my repo crapougnax/docker-pim.
+See my repo crapougnax/dc-akeneo.
 
 ### Using with kubernetes
 
