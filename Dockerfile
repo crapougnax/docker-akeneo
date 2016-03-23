@@ -1,5 +1,8 @@
 FROM tutum/apache-php
 
+# Github deployment key to speed up install
+ARG GH_OAUTH
+
 RUN apt-get update
 RUN apt-get install -y \
     git \
@@ -14,21 +17,12 @@ RUN a2enmod rewrite
 RUN echo "date.timezone = \"Europe/Paris\"" >> /etc/php5/cli/php.ini && \
     echo "date.timezone = \"Europe/Paris\"" >> /etc/php5/apache2/php.ini
 
-# Set Default Variables
-ENV PIM_VERSION 1.5.1
+RUN composer self-update
 
-RUN rm -rf /app && \
-    mkdir -p /src && \
-    wget -P /src https://github.com/akeneo/pim-community-standard/archive/v${PIM_VERSION}.tar.gz && \
-    tar -C /src -xvzf /src/v${PIM_VERSION}.tar.gz --strip-components 1 && \
-    rm /src/v${PIM_VERSION}.tar.gz
+RUN composer config -g github-oauth.github.com ${GH_OAUTH}
+RUN composer create-project --prefer-dist akeneo/pim-community-standard /pim "1.5.*@stable"
 
-WORKDIR /src
-
-ARG GH_OAUTH
-
-RUN composer config -g github-oauth.github.com ${GH_OAUTH} && \
-    composer install --prefer-dist 
+#RUN composer install --prefer-dist 
 
 ADD ./sites-enabled/akeneo-pim.conf /etc/apache2/sites-enabled/000-default.conf
 ADD ./run.sh /run.sh

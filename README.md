@@ -30,6 +30,8 @@ The container accepts the following environment variables
   ```
   $ docker build --build-arg GH_OAUTH=<your github deployment key>  -t crapougnax/akeneo .
   ```
+  
+if build fails, try to add ```--memory-swap=-1```
 
 ### Launching the container
 
